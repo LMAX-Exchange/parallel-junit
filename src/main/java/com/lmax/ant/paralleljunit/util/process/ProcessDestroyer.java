@@ -21,7 +21,6 @@ package com.lmax.ant.paralleljunit.util.process;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Destroys all registered <code>Process</code>es when the VM exits.
@@ -31,7 +30,7 @@ import java.util.Iterator;
 public class ProcessDestroyer implements Runnable
 {
     private static final int THREAD_DIE_TIMEOUT = 20000;
-    private final HashSet processes = new HashSet();
+    private final HashSet<Process> processes = new HashSet<Process>();
     // methods to register and unregister shutdown hooks
     private Method addShutdownHookMethod;
     private Method removeShutdownHookMethod;
@@ -84,12 +83,11 @@ public class ProcessDestroyer implements Runnable
         {
             // check to see if the shutdown hook methods exists
             // (support pre-JDK 1.3 and Non-Sun VMs)
-            final Class[] paramTypes = {Thread.class};
             addShutdownHookMethod =
-                    Runtime.class.getMethod("addShutdownHook", paramTypes);
+                    Runtime.class.getMethod("addShutdownHook", Thread.class);
 
             removeShutdownHookMethod =
-                    Runtime.class.getMethod("removeShutdownHook", paramTypes);
+                    Runtime.class.getMethod("removeShutdownHook", Thread.class);
             // wait to add shutdown hook as needed
         }
         catch (final NoSuchMethodException e)
@@ -149,9 +147,7 @@ public class ProcessDestroyer implements Runnable
             try
             {
                 final Boolean removed =
-                        (Boolean)removeShutdownHookMethod.invoke(
-                                Runtime.getRuntime(),
-                                args);
+                        (Boolean)removeShutdownHookMethod.invoke(Runtime.getRuntime(), args);
                 if (!removed.booleanValue())
                 {
                     System.err.println("Could not remove shutdown hook");
@@ -260,10 +256,9 @@ public class ProcessDestroyer implements Runnable
         synchronized (processes)
         {
             running = true;
-            final Iterator e = processes.iterator();
-            while (e.hasNext())
+            for (final Process p: processes)
             {
-                ((Process)e.next()).destroy();
+                p.destroy();
             }
         }
     }

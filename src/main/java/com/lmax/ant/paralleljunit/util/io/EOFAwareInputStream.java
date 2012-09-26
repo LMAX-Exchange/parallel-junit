@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 public class EOFAwareInputStream extends InputStream
 {
     private final InputStream delegate;
-    private CountDownLatch endOfStream = new CountDownLatch(1);
+    private final CountDownLatch endOfStream = new CountDownLatch(1);
 
     public EOFAwareInputStream(final InputStream delegate)
     {
@@ -27,7 +27,7 @@ public class EOFAwareInputStream extends InputStream
         {
             return checkEOF(delegate.read());
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             endOfStream();
             throw e;
@@ -41,7 +41,7 @@ public class EOFAwareInputStream extends InputStream
         {
             return checkEOF(delegate.read(b));
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             endOfStream();
             throw e;
@@ -55,7 +55,7 @@ public class EOFAwareInputStream extends InputStream
         {
             return checkEOF(delegate.read(b, off, len));
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             endOfStream();
             throw e;
@@ -83,13 +83,13 @@ public class EOFAwareInputStream extends InputStream
     }
 
     @Override
-    public void mark(final int readlimit)
+    public synchronized void mark(final int readlimit)
     {
         delegate.mark(readlimit);
     }
 
     @Override
-    public void reset() throws IOException
+    public synchronized void reset() throws IOException
     {
         delegate.reset();
     }
@@ -100,7 +100,7 @@ public class EOFAwareInputStream extends InputStream
         return delegate.markSupported();
     }
 
-    private int checkEOF(int bytes)
+    private int checkEOF(final int bytes)
     {
         if (bytes < 0)
         {

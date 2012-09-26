@@ -1,5 +1,9 @@
 package com.lmax.ant.paralleljunit;
 
+import static java.lang.Math.max;
+import static java.util.Arrays.asList;
+import static org.apache.tools.ant.util.LoaderUtils.getClassSource;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,21 +18,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 
 import javax.net.ServerSocketFactory;
-
-import com.lmax.ant.paralleljunit.remote.TestSpecificationFactory;
-import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerControllerFactory;
-import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerProcessFactory;
-import com.lmax.ant.paralleljunit.remote.process.RemoteTestRunner;
-import com.lmax.ant.paralleljunit.util.DaemonThreadFactory;
-import com.lmax.ant.paralleljunit.util.io.EOFAwareInputStreamFactory;
-import com.lmax.ant.paralleljunit.util.io.ExecuteStreamHandlerFactory;
-import com.lmax.ant.paralleljunit.util.io.PumpStreamHandlerFactory;
-import com.lmax.ant.paralleljunit.util.io.SynchronisedOutputStream;
-import com.lmax.ant.paralleljunit.util.net.ConnectionEstablisherFactory;
-import com.lmax.ant.paralleljunit.util.process.ExecuteWatchdogFactory;
-import com.lmax.ant.paralleljunit.util.process.ManagedProcessFactory;
-import com.lmax.ant.paralleljunit.util.process.ProcessBuilderFactory;
-import com.lmax.ant.paralleljunit.util.process.ProcessDestroyer;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -46,11 +35,20 @@ import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PropertySet;
 
-import static java.lang.Math.max;
-import static org.apache.tools.ant.util.LoaderUtils.getClassSource;
-
-
-import static java.util.Arrays.asList;
+import com.lmax.ant.paralleljunit.remote.TestSpecificationFactory;
+import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerControllerFactory;
+import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerProcessFactory;
+import com.lmax.ant.paralleljunit.remote.process.RemoteTestRunner;
+import com.lmax.ant.paralleljunit.util.DaemonThreadFactory;
+import com.lmax.ant.paralleljunit.util.io.EOFAwareInputStreamFactory;
+import com.lmax.ant.paralleljunit.util.io.ExecuteStreamHandlerFactory;
+import com.lmax.ant.paralleljunit.util.io.PumpStreamHandlerFactory;
+import com.lmax.ant.paralleljunit.util.io.SynchronisedOutputStream;
+import com.lmax.ant.paralleljunit.util.net.ConnectionEstablisherFactory;
+import com.lmax.ant.paralleljunit.util.process.ExecuteWatchdogFactory;
+import com.lmax.ant.paralleljunit.util.process.ManagedProcessFactory;
+import com.lmax.ant.paralleljunit.util.process.ProcessBuilderFactory;
+import com.lmax.ant.paralleljunit.util.process.ProcessDestroyer;
 
 public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
 {
@@ -96,7 +94,7 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
 
     private BatchTestFactory batchTestFactory = new BatchTestFactory();
 
-    private NumberParser numberParser = new NumberParser();
+    private final NumberParser numberParser = new NumberParser();
     private ThreadsParser threadsParser = new ThreadsParser(new PercentileParser(numberParser, availableProcessors),
                                                             new AdditiveParser(numberParser, availableProcessors),
                                                             numberParser);
@@ -298,7 +296,7 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
         return testQueue;
     }
 
-    public List<String> getCommand(final Class mainClass, final int workerId, final int serverPort)
+    public List<String> getCommand(final Class<?> mainClass, final int workerId, final int serverPort)
     {
         try
         {
@@ -313,7 +311,7 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
             {
                 if (Project.toBoolean(enableListenerEvents))
                 {
-                        clonedCommandLine.createArgument().setValue("logtestlistenerevents=true");
+                    clonedCommandLine.createArgument().setValue("logtestlistenerevents=true");
                 }
             }
             else if (enableTestListenerEvents)
@@ -386,10 +384,10 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
         final List<JUnitTest> testList = new LinkedList<JUnitTest>();
         for (final DelegatingBatchTest batchTest : batchTests)
         {
-            final Enumeration enumerationOfTests = batchTest.elements();
+            final Enumeration<JUnitTest> enumerationOfTests = batchTest.elements();
             while (enumerationOfTests.hasMoreElements())
             {
-                testList.add((JUnitTest)enumerationOfTests.nextElement());
+                testList.add(enumerationOfTests.nextElement());
             }
         }
 

@@ -9,6 +9,8 @@ import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
 
 public class TestSpecification implements Serializable
 {
+    private static final long serialVersionUID = -3153106877519338356L;
+
     private final String testName;
     private final boolean filterTrace;
     private final boolean haltOnError;
@@ -16,7 +18,7 @@ public class TestSpecification implements Serializable
     private final String outFile;
     private final String toDir;
 
-    private List<FormatterSpecification> formatters;
+    private final List<FormatterSpecification> formatters;
 
 
     /**
@@ -54,6 +56,8 @@ public class TestSpecification implements Serializable
 
     private static class FormatterSpecification implements Serializable
     {
+        private static final long serialVersionUID = 3059499247578354219L;
+
         private final String className;
         private final String extension;
 

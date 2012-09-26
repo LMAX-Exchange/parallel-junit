@@ -6,6 +6,7 @@ import java.util.Enumeration;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.optional.junit.BatchTest;
 import org.apache.tools.ant.taskdefs.optional.junit.FormatterElement;
+import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ResourceCollection;
 
@@ -33,7 +34,8 @@ public class DelegatingBatchTest
         delegate.add(rc);
     }
 
-    public Enumeration elements()
+    @SuppressWarnings("unchecked")
+    public Enumeration<JUnitTest> elements()
     {
         return delegate.elements();
     }

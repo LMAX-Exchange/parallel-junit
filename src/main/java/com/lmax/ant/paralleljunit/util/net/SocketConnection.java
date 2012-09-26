@@ -16,13 +16,13 @@ public class SocketConnection
         this.socket = socket;
     }
 
-    public void close() throws IOException
+    public void close()
     {
         try
         {
             socket.close();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // close silently
         }
@@ -34,7 +34,7 @@ public class SocketConnection
         return (T)getObjectInputStream().readObject();
     }
 
-    public void writeObject(Object object) throws IOException
+    public void writeObject(final Object object) throws IOException
     {
         final ObjectOutputStream outputStream = getObjectOutputStream();
         outputStream.writeObject(object);

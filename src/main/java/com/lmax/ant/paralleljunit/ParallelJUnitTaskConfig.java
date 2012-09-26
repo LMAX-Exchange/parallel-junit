@@ -14,7 +14,7 @@ public interface ParallelJUnitTaskConfig
 
     Queue<JUnitTest> getTestQueue();
 
-    List<String> getCommand(Class mainClass, int workerId, int serverPort);
+    List<String> getCommand(Class<?> mainClass, int workerId, int serverPort);
 
     File getDirectory();
 
