@@ -50,7 +50,7 @@ public class ParallelJUnitTaskSpec extends Specification {
         1 * remoteRunnerPath.setLocation({ it.name ==~ /ant-junit-[\d\.]+.jar/ })
         1 * remoteRunnerPath.setLocation({ it.name ==~ /ant-launcher-[\d\.]+.jar/ })
         1 * remoteRunnerPath.setLocation({ it.name ==~ /ant-[\d\.]+.jar/ })
-        1 * remoteRunnerPath.setLocation({ it.canonicalPath =~ /\/target\/classes$/ })
+        1 * remoteRunnerPath.setLocation({ it.canonicalPath =~ /\/build\/classes\/main$/ })
     }
 
     def 'Do not add command line argument when print summary is off'() {
