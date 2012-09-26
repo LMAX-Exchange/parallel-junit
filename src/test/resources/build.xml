@@ -1,0 +1,25 @@
+<project name="test" xmlns:pju="antlib:com.lmax.ant.paralleljunit">
+    <target name="build">
+        <path id="task-path">
+            <pathelement location="${jar}"/>
+            <pathelement location="${org.apache.ant:ant-junit:jar}"/>
+        </path>
+
+        <mkdir dir="target/report"/>
+
+        <taskdef resource="com/lmax/ant/paralleljunit/antlib.xml" uri="antlib:com.lmax.ant.paralleljunit" classpathref="task-path"/>
+
+        <pju:parallel-junit printsummary="on" threads="50%" shuffle="yes">
+            <classpath>
+                <path refid="maven.test.classpath"/>
+            </classpath>
+            <batchtest toDir="target/report">
+                <formatter type="xml"/>
+                <fileset dir="${project.build.testOutputDirectory}">
+                    <include name="**/*Test.class"/>
+                    <include name="**/*Spec.class"/>
+                </fileset>
+            </batchtest>
+        </pju:parallel-junit>
+    </target>
+</project>
