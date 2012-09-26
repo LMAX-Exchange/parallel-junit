@@ -34,36 +34,71 @@
           <h1>Parallel JUnit</h1>
           <p>An Ant task for running JUnit tests in parallel</p>
           <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/LMAX-Exchange">LMAX-Exchange</a></span>
+          <span class="credits left">Project maintained by <a href="https://github.com/LMAX-Exchange">LMAX Exchange</a></span>
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
         </div>
 
-        <h3>Welcome to GitHub Pages.</h3>
+        <h3>Run your JUnit tests in parallel.</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>Parallel JUnit is an <a href="http://ant.apache.org">Ant</a> task for running <a href="http://www.junit.org">JUnit</a> tests in parallel. We wrote this task while trying to harness the power of modern developer workstations to decrease our pre-commit build time. As of the initial release it supports a subset of the features of the standard Ant <a href="http://ant.apache.org/manual/Tasks/junit.html">JUnit task</a> which was most useful to us! However, we believe that the current state of the task will allow it to work (almost) as a drop-in replacement for the standard JUnit task.</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<h3>Example usage</h3>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<pre><code>&lt;project name="myproj" xmlns:pju="antlib:com.lmax.ant.paralleljunit"&gt;
+    &lt;taskdef resource="com/lmax/ant/paralleljunit/antlib.xml" 
+                uri="antlib:com.lmax.ant.paralleljunit"&gt;
+        &lt;classpath&gt;...&lt;/classpath&gt;
+    &lt;/taskdef&gt;
 
-<h3>Designer Templates</h3>
+    &lt;pju:parallel-junit printsummary="on" threads="4"&gt;
+        &lt;jvmarg .../&gt;
+        &lt;sysproperty .../&gt;
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+        &lt;classpath&gt;
+            ...
+        &lt;/classpath&gt;
 
-<h3>Rather Drive Stick?</h3>
+        &lt;formatter type="xml"/&gt;
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+        &lt;batchtest todir="build/test-reports/xml"&gt;
+            ...
+        &lt;/batchtest&gt;
+    &lt;/pju:parallel-junit&gt;
+&lt;/project&gt;</code></pre>
+
+<p>The most interesting thing about this is the threads attribute. Possible values for this are:<p>
+
+<table>
+    <thead>
+        <tr><th>Value</th><th>Number of workers used</th></tr>
+    </thead>
+    <tbody>
+        <tr><td>not specified</td><td>Runtime.availableProcessors()</td></tr>
+        <tr><td><i>n</i>%</td><td><i>n</i>% of Runtime.availableProcessors()</td></tr>
+        <tr><td>-<i>n</i></td><td>Runtime.availableProcessors()&nbsp;-&nbsp;<i>n</i></td></tr>
+        <tr><td><i>n</i></td><td><i>n</i></td></tr>
+    </tbody>
+</table>
+
+<h3>Architecture</h3>
+
+<p><ul>
+    <li>All the tests are put in a queue</li>
+    <li>For each thread/worker, a new JVM is started using the settings from the &lt;parallel-junit&gt; task</li>
+    <li>The worker JVMs communicate with the task via a socket</li>
+    <li>The workers repeatedly pull a test off the queue, execute it and report the results back, until the queue is empty</li>
+    <li>Once the queue is empty, the workers exit</li>
+</ul></p>
 
 <h3>Authors and Contributors</h3>
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<p>The original authors were Dalibor Novak (@BorePlusPlus) and Danny Yates (@codeaholics)</p>
 
 <h3>Support or Contact</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<p>We welcome contributions to Parallel JUnit - especially if they extend the task to cover some of the missing functionality of the JUnit task. Please fork us on GitHub and send us a pull request.</p>
+
+<p>If you've found a bug, please raise an issue in the <a href="https://github.com/LMAX-Exchange/parallel-junit/issues">issue tracker</a>.
       </section>
 
     </div>
