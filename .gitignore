@@ -1,4 +1,5 @@
+/build
 /bin
-/target
+/.gradle
 /.idea
 parallel-ant-junit.iml
