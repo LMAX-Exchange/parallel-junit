@@ -1,5 +1,6 @@
 package com.lmax.ant.paralleljunit
 
+import org.apache.tools.ant.BuildException
 import org.apache.tools.ant.Project
 import org.apache.tools.ant.ProjectHelper
 
@@ -9,7 +10,8 @@ import spock.lang.Specification
 class IntegrationTestSpec extends Specification {
 
     @Ignore
-    def 'First'() {
+    def 'First approach'() {
+        // Create the Ant project by hand and call targets on it. Expect a BuildException if an expection is expected
         given:
         def project = createAntProject()
 
@@ -17,42 +19,23 @@ class IntegrationTestSpec extends Specification {
         project.executeTarget("does-not-exist")
 
         then:
-        true
+        thrown(BuildException)
     }
 
-    def 'Second'() {
+    def 'Second approach'() {
+        // Use the Groovy AntBuilder to directly execute the task
         given:
         def ant = createAntBuilder()
 
         when:
-        ant.'parallel-junit'(wibble: 'no')
+        ant.'parallel-junit'()
 
         then:
         true
     }
 
-//    @Subject
-//    private AdditiveParser negativeAbsoluteParser = new AdditiveParser(numberParser, 8)
-//
-//    @Unroll('Selects #selectedThreads when defaulted to 8 processors and #param selected')
-//    def 'Calculates number of "threads" to use based on default'() {
-//
-//        expect:
-//        negativeAbsoluteParser.parse(param) == selectedThreads
-//
-//        where:
-//        param   | selectedThreads
-//        '-1'    | 7
-//        '-4'    | 4
-//        '-8'    | 0
-//        '-10'   | -2
-//        '0'     | 8
-//        '1'     | 9
-//        '112'   | 120
-//    }
-
     Project createAntProject() {
-        def antFile = new File('src/test/resources/build.xml')
+        def antFile = new File('src/itest/resources/itest-build.xml')
         def project = new Project()
         project.init()
         ProjectHelper.projectHelper.parse(project, antFile)
