@@ -1,9 +1,5 @@
 package com.lmax.ant.paralleljunit;
 
-import static java.lang.Math.max;
-import static java.util.Arrays.asList;
-import static org.apache.tools.ant.util.LoaderUtils.getClassSource;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +14,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executors;
 
 import javax.net.ServerSocketFactory;
+
+import junit.framework.TestListener;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
@@ -49,6 +47,10 @@ import com.lmax.ant.paralleljunit.util.process.ExecuteWatchdogFactory;
 import com.lmax.ant.paralleljunit.util.process.ManagedProcessFactory;
 import com.lmax.ant.paralleljunit.util.process.ProcessBuilderFactory;
 import com.lmax.ant.paralleljunit.util.process.ProcessDestroyer;
+
+import static java.lang.Math.max;
+import static java.util.Arrays.asList;
+import static org.apache.tools.ant.util.LoaderUtils.getClassSource;
 
 public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
 {
@@ -128,6 +130,7 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
         remoteTestRunnerClasses.setLocation(getClassSource(JUnitTest.class));
         remoteTestRunnerClasses.setLocation(getClassSource(AntMain.class));
         remoteTestRunnerClasses.setLocation(getClassSource(Task.class));
+        remoteTestRunnerClasses.setLocation(getClassSource(TestListener.class));
     }
 
     public void setPrintSummary(final SummaryAttribute printSummary)
