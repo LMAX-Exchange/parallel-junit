@@ -37,11 +37,6 @@ sourceSets {
 
 eclipse.classpath.plusConfigurations += configurations.provided
 
-tasks.withType(Compile) {
-    options.compilerArgs << '-Xlint:unchecked'
-    options.compilerArgs << '-Xlint:-options'
-}
-
 dependencies {
     groovy 'org.codehaus.groovy:groovy-all:1.8.6'
 
@@ -59,3 +54,13 @@ task integrationTest(type: Test, dependsOn: ['classes', 'integrationTestClasses'
     classpath = sourceSets.integrationTest.runtimeClasspath
 }
 check.dependsOn integrationTest
+
+tasks.withType(Compile) {
+    options.compilerArgs << '-Xlint:unchecked'
+    options.compilerArgs << '-Xlint:-options'
+}
+
+tasks.withType(Test) {
+    testReportDir = new File("${reportsDir}/${testReportDirName}/${name}")
+    testResultsDir = new File("${buildDir}/${testResultsDirName}/${name}")
+}
