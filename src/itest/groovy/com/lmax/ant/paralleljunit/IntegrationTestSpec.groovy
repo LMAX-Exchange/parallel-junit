@@ -9,7 +9,6 @@ import spock.lang.Specification
 
 class IntegrationTestSpec extends Specification {
 
-    @Ignore
     def 'First approach'() {
         // Create the Ant project by hand and call targets on it. Expect a BuildException if an expection is expected
         given:
