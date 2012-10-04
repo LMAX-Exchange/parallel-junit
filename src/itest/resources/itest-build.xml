@@ -5,7 +5,7 @@
             <pathelement location="${org.apache.ant:ant-junit:jar}"/>
         </path>
 
-        <mkdir dir="target/report"/>
+        <mkdir dir="build/tmp/integrationTest"/>
 
         <taskdef resource="com/lmax/ant/paralleljunit/antlib.xml" uri="antlib:com.lmax.ant.paralleljunit" classpathref="task-path"/>
 
@@ -13,7 +13,7 @@
             <classpath>
                 <path refid="maven.test.classpath"/>
             </classpath>
-            <batchtest toDir="target/report">
+            <batchtest toDir="build/tmp/integrationTest">
                 <formatter type="xml"/>
                 <fileset dir="${project.build.testOutputDirectory}">
                     <include name="**/*Test.class"/>
