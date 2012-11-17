@@ -64,3 +64,11 @@ tasks.withType(Test) {
     testReportDir = file("${reporting.baseDir}/${testReportDirName}/${name}")
     testResultsDir = file("${buildDir}/${testResultsDirName}/${name}")
 }
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts.archives  sourcesJar
+
