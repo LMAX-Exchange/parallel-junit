@@ -31,8 +31,6 @@ import java.util.concurrent.Executors;
 
 import javax.net.ServerSocketFactory;
 
-import junit.framework.TestListener;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
@@ -146,7 +144,6 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
         remoteTestRunnerClasses.setLocation(getClassSource(JUnitTest.class));
         remoteTestRunnerClasses.setLocation(getClassSource(AntMain.class));
         remoteTestRunnerClasses.setLocation(getClassSource(Task.class));
-        remoteTestRunnerClasses.setLocation(getClassSource(TestListener.class));
     }
 
     public void setPrintSummary(final SummaryAttribute printSummary)
