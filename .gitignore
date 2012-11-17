@@ -1,5 +1,6 @@
 /build
 /bin
+classes
 /.gradle
 /.idea
-parallel-ant-junit.iml
+parallel-junit.iml
