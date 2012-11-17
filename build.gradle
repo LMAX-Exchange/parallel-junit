@@ -61,6 +61,6 @@ tasks.withType(Compile) {
 }
 
 tasks.withType(Test) {
-    testReportDir = new File("${reporting.baseDir}/${testReportDirName}/${name}")
-    testResultsDir = new File("${buildDir}/${testResultsDirName}/${name}")
+    testReportDir = file("${reporting.baseDir}/${testReportDirName}/${name}")
+    testResultsDir = file("${buildDir}/${testResultsDirName}/${name}")
 }
