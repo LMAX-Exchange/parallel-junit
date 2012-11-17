@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'groovy'
+apply plugin: 'signing'
+apply plugin: 'maven'
 apply plugin: 'eclipse'   // Only used so the Eclipse STS Gradle plugin can see the 'provided' conf dependencies. :-(
 
 defaultTasks 'build'
@@ -8,7 +10,15 @@ group = 'com.lmax.ant'
 archivesBaseName = 'parallel-junit'
 version = '0.1'
 
-description = 'Parallel JUnit Task'
+description = 'Parallel JUnit Ant Task'
+
+ext {
+    fullName = 'Parallel JUnit'
+    sourceUrl = 'git@github.com:LMAX-Exchange/parallel-junit.git'
+
+    if (!project.hasProperty('sonatypeUsername')) sonatypeUsername = ''
+    if (!project.hasProperty('sonatypePassword')) sonatypePassword = ''
+}
 
 sourceCompatibility = 1.5
 targetCompatibility = 1.5
@@ -71,4 +81,52 @@ task sourcesJar(type: Jar) {
 }
 
 artifacts.archives  sourcesJar
+
+signing {
+    required { gradle.taskGraph.hasTask(uploadArchives) }
+    sign configurations.archives
+}
+
+def projectPom = {
+    name = fullName
+    description = project.description
+    url = 'http://lmax-exchange.github.com/parallel-junit/'
+
+    scm {
+        url = "scm:$sourceUrl"
+        connection = "scm:$sourceUrl"
+    }
+
+    licenses {
+        license {
+            name = 'The Apache Software License, Version 2.0'
+            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution = 'repo'
+        }
+    }
+
+    developers {
+        developer {
+            id = 'team'
+            name = 'LMAX OSS Team'
+            email = 'oss@lmax.com'
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller.pom.project(projectPom)
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        beforeDeployment { deployment -> signing.signPom(deployment) }
+
+        repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2') {
+            authentication(userName: sonatypeUsername, password: sonatypePassword)
+        }
+
+        pom.project(projectPom)
+    }
+}
 
