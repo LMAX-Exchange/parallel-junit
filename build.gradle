@@ -52,7 +52,6 @@ dependencies {
 
     provided 'org.apache.ant:ant-junit:1.8.4'
 
-    testCompile 'junit:junit:4.10'
     testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 
     testRuntime 'cglib:cglib-nodep:2.2'
