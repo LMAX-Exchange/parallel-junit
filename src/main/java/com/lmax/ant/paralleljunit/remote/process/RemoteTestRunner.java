@@ -26,7 +26,6 @@ import javax.net.SocketFactory;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ExitException;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner;
-import org.apache.tools.ant.util.optional.NoExitSecurityManager;
 
 import com.lmax.ant.paralleljunit.remote.TestResult;
 import com.lmax.ant.paralleljunit.remote.TestSpecification;
