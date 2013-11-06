@@ -15,21 +15,20 @@
  */
 package com.lmax.ant.paralleljunit;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.Executors;
-
-import javax.net.ServerSocketFactory;
-
+import com.lmax.ant.paralleljunit.remote.TestSpecificationFactory;
+import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerControllerFactory;
+import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerProcessFactory;
+import com.lmax.ant.paralleljunit.remote.process.RemoteTestRunner;
+import com.lmax.ant.paralleljunit.util.DaemonThreadFactory;
+import com.lmax.ant.paralleljunit.util.io.EOFAwareInputStreamFactory;
+import com.lmax.ant.paralleljunit.util.io.ExecuteStreamHandlerFactory;
+import com.lmax.ant.paralleljunit.util.io.PumpStreamHandlerFactory;
+import com.lmax.ant.paralleljunit.util.io.SynchronisedOutputStream;
+import com.lmax.ant.paralleljunit.util.net.ConnectionEstablisherFactory;
+import com.lmax.ant.paralleljunit.util.process.ExecuteWatchdogFactory;
+import com.lmax.ant.paralleljunit.util.process.ManagedProcessFactory;
+import com.lmax.ant.paralleljunit.util.process.ProcessBuilderFactory;
+import com.lmax.ant.paralleljunit.util.process.ProcessDestroyer;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectComponent;
@@ -45,21 +44,21 @@ import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.Environment;
 import org.apache.tools.ant.types.Path;
 import org.apache.tools.ant.types.PropertySet;
+import org.apache.tools.ant.util.LoaderUtils;
 
-import com.lmax.ant.paralleljunit.remote.TestSpecificationFactory;
-import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerControllerFactory;
-import com.lmax.ant.paralleljunit.remote.controller.RemoteTestRunnerProcessFactory;
-import com.lmax.ant.paralleljunit.remote.process.RemoteTestRunner;
-import com.lmax.ant.paralleljunit.util.DaemonThreadFactory;
-import com.lmax.ant.paralleljunit.util.io.EOFAwareInputStreamFactory;
-import com.lmax.ant.paralleljunit.util.io.ExecuteStreamHandlerFactory;
-import com.lmax.ant.paralleljunit.util.io.PumpStreamHandlerFactory;
-import com.lmax.ant.paralleljunit.util.io.SynchronisedOutputStream;
-import com.lmax.ant.paralleljunit.util.net.ConnectionEstablisherFactory;
-import com.lmax.ant.paralleljunit.util.process.ExecuteWatchdogFactory;
-import com.lmax.ant.paralleljunit.util.process.ManagedProcessFactory;
-import com.lmax.ant.paralleljunit.util.process.ProcessBuilderFactory;
-import com.lmax.ant.paralleljunit.util.process.ProcessDestroyer;
+import javax.net.ServerSocketFactory;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executors;
 
 import static java.lang.Math.max;
 import static java.util.Arrays.asList;
@@ -143,6 +142,11 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
         remoteTestRunnerClasses.setLocation(getClassSource(JUnitTest.class));
         remoteTestRunnerClasses.setLocation(getClassSource(AntMain.class));
         remoteTestRunnerClasses.setLocation(getClassSource(Task.class));
+        final File antJunit4Lib = LoaderUtils.getResourceSource(getClass().getClassLoader(), "org/apache/tools/ant/taskdefs/optional/junit/JUnit4TestMethodAdapter.class");
+        if (antJunit4Lib != null)
+        {
+            remoteTestRunnerClasses.setLocation(antJunit4Lib);
+        }
     }
 
     public void setPrintSummary(final SummaryAttribute printSummary)
