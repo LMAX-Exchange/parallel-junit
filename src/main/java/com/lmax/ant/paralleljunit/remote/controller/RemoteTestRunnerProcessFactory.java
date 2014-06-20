@@ -42,9 +42,21 @@ public class RemoteTestRunnerProcessFactory
 
         final DelegatingProcessBuilder processBuilder = processBuilderFactory.createProcessBuilder(jvmCommand);
 
-        final File workingDirectory = config.getDirectory();
+        File workingDirectory = config.getDirectory();
+        if (config.isDirPerWorker())
+        {
+            File baseDirectory = workingDirectory != null ? workingDirectory : new File(System.getProperty("user.dir"));
+            workingDirectory = new File(baseDirectory, config.getWorkerDirPrefix() + workerId);
+        }
         if (workingDirectory != null)
         {
+            if (!workingDirectory.exists())
+            {
+                if (!workingDirectory.mkdirs())
+                {
+                    throw new BuildException("Failed to create worker directory: " + workingDirectory.getPath());
+                }
+            }
             processBuilder.directory(workingDirectory);
         }
 

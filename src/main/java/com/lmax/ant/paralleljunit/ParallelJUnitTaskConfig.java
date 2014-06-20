@@ -44,4 +44,8 @@ public interface ParallelJUnitTaskConfig
     ProjectComponent getProjectComponent();
 
     int getThreads();
+
+    boolean isDirPerWorker();
+
+    String getWorkerDirPrefix();
 }
