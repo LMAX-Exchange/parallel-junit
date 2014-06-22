@@ -79,6 +79,8 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
     private boolean shuffle = false;
     private final int availableProcessors = Runtime.getRuntime().availableProcessors();
     private int threads = availableProcessors;
+    private boolean dirPerWorker = false;
+    private String workerDirPrefix = "parallel-junit-";
 
     private CommandlineJava commandLine = new CommandlineJava();
     private Environment environment = new Environment();
@@ -206,6 +208,16 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
     public void setNewEnvironment(final boolean newEnvironment)
     {
         this.newEnvironment = newEnvironment;
+    }
+
+    public void setDirPerWorker(boolean dirPerWorker)
+    {
+        this.dirPerWorker = dirPerWorker;
+    }
+
+    public void setWorkerDirPrefix(String workerDirPrefix)
+    {
+        this.workerDirPrefix = workerDirPrefix;
     }
 
     public void setShowOutput(final boolean showOutput)
@@ -347,8 +359,13 @@ public class ParallelJUnitTask extends Task implements ParallelJUnitTaskConfig
         }
     }
 
-    public File getDirectory()
+    public File getDirectory(int workerId)
     {
+        if (dirPerWorker)
+        {
+            File baseDirectory = dir != null ? dir : new File(System.getProperty("user.dir"));
+            return new File(baseDirectory, workerDirPrefix + workerId);
+        }
         return dir;
     }
 

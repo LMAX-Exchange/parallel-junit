@@ -401,4 +401,23 @@ public class ParallelJUnitTaskSpec extends Specification {
         expect:
         task.environment == [cat: 'tom', mouse: 'jerry']
     }
+
+    def 'Creates separate working directory per worker when enabled'() {
+        given:
+        task.dir = "foo" as File
+        task.workerDirPrefix = "workerPrefix"
+        task.dirPerWorker = true
+
+        expect:
+        task.getDirectory(3) == new File(task.dir, task.workerDirPrefix + 3)
+    }
+
+    def 'Return working directory when directory per worker is not enabled'() {
+        given:
+        task.dir = "foo" as File
+        task.dirPerWorker = false
+
+        expect:
+        task.getDirectory(2) == "foo" as File
+    }
 }
