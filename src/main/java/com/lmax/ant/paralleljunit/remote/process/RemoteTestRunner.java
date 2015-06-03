@@ -15,6 +15,7 @@
  */
 package com.lmax.ant.paralleljunit.remote.process;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -45,7 +46,7 @@ public class RemoteTestRunner
         this.connectionFactory = connectionFactory;
     }
 
-    public static void main(final String... args)
+    public static void main(final String... args) throws Exception
     {
         final ArgsParser parser = new ArgsParser();
         final RemoteTestRunnerParams paramsRemote = parser.parseMainArgs(args);
@@ -56,7 +57,7 @@ public class RemoteTestRunner
         testRunner.executeTests();
     }
 
-    private void executeTests()
+    private void executeTests() throws EOFException
     {
         try
         {
@@ -81,6 +82,11 @@ public class RemoteTestRunner
                         throw new RuntimeException("All hell broke loose");
                 }
             }
+        }
+        catch (final EOFException e)
+        {
+            e.printStackTrace();
+            throw e;
         }
         catch (final IOException e)
         {
