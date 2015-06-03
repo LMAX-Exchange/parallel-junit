@@ -3,4 +3,6 @@
 classes
 /.gradle
 /.idea
+/parallel-junit.ipr
+/parallel-junit.iws
 parallel-junit.iml
